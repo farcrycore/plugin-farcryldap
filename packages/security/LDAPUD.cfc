@@ -101,4 +101,52 @@
 		<cfreturn stResult />
 	</cffunction>
 
+	<cffunction name="getGroupUsers" access="public" output="false" returntype="array" hint="Returns all the users in a specified group">
+		<cfargument name="group" type="string" required="true" hint="The group to query" />
+		
+		<!--- query ad for the members of a group --->
+		<cfldap
+			action="query"
+			name="qUsers"
+			server="#application.config.ldap.host#"
+			username="#application.config.ldap.username#"
+			password="#application.config.ldap.password#"
+			start="#application.config.ldap.groupstart#"
+			scope="subtree"
+			attributes="member"
+			filter="(&(objectclass=group)(cn=#arguments.group#))" />
+		
+		<!--- Build an array of users from each comma-separated element of "member" beginning with "cn=" --->
+		<cfset aUsers = ArrayNew(1) />
+		<cfloop list="#qUsers.member#" index="i">
+			<cfif findnocase("CN=",i)>
+				<cfset arrayappend(aUsers,ReplaceNoCase(i,"CN=","")) />
+			</cfif>
+		</cfloop>
+		
+		<!--- Convert the array to a string which will be used in a subsequent LDAP filter --->
+		<cfsavecontent variable="tmpfilter">
+			<cfsetting enableCFoutputOnly = "yes">
+				<cfloop from="1" to="#ArrayLen(aUsers)#" index="i">
+					<cfoutput>(cn=#Trim(aUsers[i])#)</cfoutput>
+				</cfloop>
+			</cfsetting>
+		</cfsavecontent>
+		
+		<cfset userfilter = "(&(objectClass=user)(|#trim(tmpfilter)#))">
+		
+		<!--- query the userids of the CNs returned from the members of group query--->
+		<cfldap username="#application.config.ldap.username#"
+			password="#application.config.ldap.password#"
+			server="#application.config.ldap.host#"
+			action="query"
+			name="qUsers"
+			start="#application.config.ldap.userstart#"
+			scope="subtree"
+			attributes="sAMAccountName"
+			filter="#userfilter#" />
+		
+		<cfreturn listtoarray(valuelist(qUsers.sAMAccountName))>
+	</cffunction> 
+
 </cfcomponent>
