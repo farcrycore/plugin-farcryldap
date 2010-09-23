@@ -1,6 +1,7 @@
 <cfsetting enablecfoutputonly="Yes">
 <!--- @@displayname: Farcry UD login form --->
 
+<cfimport taglib="/farcry/core/tags/webskin" prefix="skin" />
 <cfimport taglib="/farcry/core/tags/formtools/" prefix="ft" />
 <cfimport taglib="/farcry/core/tags/security/" prefix="sec" />
 
