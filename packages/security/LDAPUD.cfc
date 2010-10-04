@@ -66,6 +66,10 @@
 			<cfldap server="#application.config.ldap.host#" action="query" name="qResult" start="#application.config.ldap.groupstart#" scope="subtree" attributes="#application.config.ldap.groupidattribute#" filter="#application.config.ldap.allgroupsfilter#" />
 		</cfif>
 		
+		<cfquery name="qResult" dbtype="query">
+		select #application.config.ldap.groupidattribute# from qResult order by #application.config.ldap.groupidattribute#
+		</cfquery>
+		
 		<cfloop query="qResult">
 			<cfset arrayappend(aGroups,qResult[application.config.ldap.groupidattribute][currentrow]) />
 		</cfloop>
