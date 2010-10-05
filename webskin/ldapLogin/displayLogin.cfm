@@ -13,6 +13,35 @@
 		</cfoutput>	
 		
 			<ft:form>
+				
+				<!--- -------------- --->
+				<!--- SELECT PROJECT --->
+				<!--- -------------- --->
+				<cfif structKeyExists(server, "stFarcryProjects") AND structcount(server.stFarcryProjects) GT 1>
+					<cfset aDomainProjects = arraynew(1) />
+					<cfloop collection="#server.stFarcryProjects#" item="thisproject">
+						<cfif isstruct(server.stFarcryProjects[thisproject]) and listcontains(server.stFarcryProjects[thisproject].domains,cgi.http_host)>
+							<cfset arrayappend(aDomainProjects,thisproject) />
+						</cfif>
+					</cfloop>
+					
+					<cfif arraylen(aDomainProjects) gt 1>
+						<ft:fieldset>
+							<ft:field label="Project Selection" for="selectFarcryProject">
+								<cfoutput>
+								<select name="selectFarcryProject" id="selectFarcryProject" class="selectInput" onchange="window.location='#application.url.webtop#/login.cfm?<cfif structKeyExists(url,'returnurl') and len(trim(url.returnurl))>returnurl=#urlEncodedFormat(url.returnurl)#&</cfif>farcryProject='+this.value;">						
+									<cfloop from="1" to="#arraylen(aDomainProjects)#" index="i">
+										<cfif len(aDomainProjects[i])>
+											<option value="#aDomainProjects[i]#"<cfif cookie.currentFarcryProject eq aDomainProjects[i]> selected="selected"</cfif>>#server.stFarcryProjects[aDomainProjects[i]].displayname#</option>
+										</cfif>
+									</cfloop>						
+								</select>
+								</cfoutput>
+							</ft:field>
+						</ft:fieldset>	
+					</cfif>
+				</cfif>			
+				
 				<!--- --------------------- --->
 				<!--- SELECT USER DIRECTORY --->
 				<!--- --------------------- --->
@@ -21,7 +50,7 @@
 					<ft:fieldset>
 						<ft:field label="Select User Directory" for="selectuserdirectories">
 						
-							<cfoutput><select name="selectuserdirectories" id="selectuserdirectories" class="selectInput" onchange="window.location='#application.url.farcry#/login.cfm?ud='+this.value;"></cfoutput>
+							<cfoutput><select name="selectuserdirectories" id="selectuserdirectories" class="selectInput" onchange="window.location='#application.url.farcry#/login.cfm?<cfif structKeyExists(url,'returnurl') and len(trim(url.returnurl))>returnurl=#urlEncodedFormat(url.returnurl)#&</cfif>ud='+this.value;"></cfoutput>
 							
 							<cfloop list="#application.security.getAllUD()#" index="thisud">
 								<cfoutput>
