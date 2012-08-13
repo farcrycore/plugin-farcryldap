@@ -6,6 +6,7 @@
 	</cffunction>
 	
 	<cffunction name="authenticate" access="public" output="true" returntype="struct" hint="Attempts to process a user. Runs every time the login form is loaded.">
+		<cfset var stProperties = structnew() />
 		<cfset var stResult = structnew() />
 		<cfset var qResult = "" />
 		
