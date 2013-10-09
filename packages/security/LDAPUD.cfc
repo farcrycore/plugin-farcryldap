@@ -57,15 +57,24 @@
 		<cfreturn aGroups />
 	</cffunction>
 
-	<cffunction name="getUserDN" access="public" output="false" returntype="array" hint="Returns the distinguished name of the given username">
+	<cffunction name="getUserDN" access="public" output="false" returntype="string" hint="Returns the distinguished name of the given username">
 		<cfargument name="UserID" type="string" required="true" hint="The user being queried" />
 
 		<cfset var qResult = "" />
 		<cfset var dn = replaceNoCase(application.config.ldap.userdn,'{userid}',arguments.userid)>
 
 		<cfif NOT len(dn)>
-			<cfldap server="#application.config.ldap.host#" username="#application.config.ldap.username#" password="#application.config.ldap.password#" action="query" name="qResult" scope="subtree" start="#application.config.ldap.userstart#" attributes="distinguishedName" filter="sAMAccountName=#arguments.userid#" />
-			<cfset dn = qResults.distinguishedName>
+			<cfldap 
+				server="#application.config.ldap.host#" 
+				username="#application.config.ldap.username#" 
+				password="#application.config.ldap.password#" 
+				action="query" 
+				name="qResult" 
+				scope="subtree" 
+				start="#application.config.ldap.userstart#" 
+				attributes="distinguishedName" 
+				filter="sAMAccountName=#arguments.userid#" />
+			<cfset dn = qResult.distinguishedName>
 		</cfif>
 
 		<cfreturn dn />
