@@ -22,7 +22,7 @@
 		
 				<!--- Find the user --->
 				<cftry>
-					<cfldap server="#application.config.ldap.host#" action="query" name="qResult" start="#application.config.ldap.userstart#" scope="base" attributes="*" username="#replace(application.config.ldap.userdn,'{userid}',stProperties.username)#" password="#stProperties.password#" />
+					<cfldap server="#application.config.ldap.host#" action="query" name="qResult" start="#application.config.ldap.userstart#" scope="base" attributes="*" username="#getUserDN(stProperties.username)#" password="#stProperties.password#" />
 					<cfset stResult.authenticated = true />
 					<cfset stResult.userid = stProperties.username />
 					
@@ -56,7 +56,21 @@
 		
 		<cfreturn aGroups />
 	</cffunction>
-	
+
+	<cffunction name="getUserDN" access="public" output="false" returntype="array" hint="Returns the distinguished name of the given username">
+		<cfargument name="UserID" type="string" required="true" hint="The user being queried" />
+
+		<cfset var qResult = "" />
+		<cfset var dn = replaceNoCase(application.config.ldap.userdn,'{userid}',arguments.userid)>
+
+		<cfif NOT len(dn)>
+			<cfldap server="#application.config.ldap.host#" username="#application.config.ldap.username#" password="#application.config.ldap.password#" action="query" name="qResult" scope="subtree" start="#application.config.ldap.userstart#" attributes="distinguishedName" filter="sAMAccountName=#arguments.userid#" />
+			<cfset dn = qResults.distinguishedName>
+		</cfif>
+
+		<cfreturn dn />
+	</cffunction>
+
 	<cffunction name="getAllGroups" access="public" output="false" returntype="array" hint="Returns all the groups that this user directory supports">
 		<cfset var qResult = "" />
 		<cfset var aGroups = arraynew(1) />
@@ -85,18 +99,19 @@
 		<cfset var stUserToProfile = structnew() />
 		<cfset var qResult = "" />
 		<cfset var stResult = structnew() />
-		
+		<cfset var userDN = getUserDN(arguments.userid) />
+
 		<cfif listlen(application.config.ldap.usertoprofile)>
 			<cfloop list="#application.config.ldap.usertoprofile#" index="attr">
 				<cfset stUserToProfile[listlast(attr,"=")] = listfirst(attr,"=") />
 			</cfloop>
-			
+
 			<cfif len(application.config.ldap.username) and len(application.config.ldap.password)>
-				<cfldap server="#application.config.ldap.host#" username="#application.config.ldap.username#" password="#application.config.ldap.password#" action="query" name="qResult" start="#replace(application.config.ldap.userdn,'{userid}',arguments.userid)#" scope="base" attributes="#structkeylist(stUserToProfile)#" />
+				<cfldap server="#application.config.ldap.host#" username="#application.config.ldap.username#" password="#application.config.ldap.password#" action="query" name="qResult" start="#userdn#" scope="base" attributes="#structkeylist(stUserToProfile)#" />
 			<cfelse>
-				<cfldap server="#application.config.ldap.host#" action="query" name="qResult" start="#replace(application.config.ldap.userdn,'{userid}',arguments.userid)#" scope="base" attributes="#structkeylist(stUserToProfile)#" />
+				<cfldap server="#application.config.ldap.host#" action="query" name="qResult" start="#userdn#" scope="base" attributes="#structkeylist(stUserToProfile)#" />
 			</cfif>
-	
+
 			<cfloop list="#qResult.columnlist#" index="attr">
 				<cfset stResult[stUserToProfile[attr]] = qResult[attr][1] />
 			</cfloop>
@@ -120,7 +135,7 @@
 			scope="subtree"
 			attributes="member"
 			filter="(&(objectclass=group)(cn=#arguments.group#))" />
-		
+
 		<!--- Build an array of users from each comma-separated element of "member" beginning with "cn=" --->
 		<cfset aUsers = ArrayNew(1) />
 		<cfloop list="#qUsers.member#" index="i">
