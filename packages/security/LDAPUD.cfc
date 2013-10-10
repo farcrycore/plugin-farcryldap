@@ -37,22 +37,29 @@
 		
 		<cfreturn stResult />
 	</cffunction>
-	
+
 	<cffunction name="getUserGroups" access="public" output="false" returntype="array" hint="Returns the groups that the specified user is a member of">
 		<cfargument name="UserID" type="string" required="true" hint="The user being queried" />
 		
 		<cfset var qResult = "" />
 		<cfset var aGroups = arraynew(1) />
+		<cfset var memberOf = "" />
+		<cfset var i = 0 />
 		
 		<cfif len(application.config.ldap.username) and len(application.config.ldap.password)>
-			<cfldap server="#application.config.ldap.host#" username="#application.config.ldap.username#" password="#application.config.ldap.password#" action="query" name="qResult" start="#application.config.ldap.groupstart#" scope="subtree" attributes="#application.config.ldap.groupidattribute#" filter="#replace(application.config.ldap.groupfilter,'{userid}',arguments.userid)#" />
+			<cfldap server="#application.config.ldap.host#" username="#application.config.ldap.username#" password="#application.config.ldap.password#" action="query" name="qResult" start="#getUserDN(arguments.UserID)#" scope="subtree" attributes="memberOf" filter="#replace(application.config.ldap.groupfilter,'{userid}',arguments.userid)#" />
 		<cfelse>
-			<cfldap server="#application.config.ldap.host#" action="query" name="qResult" start="#application.config.ldap.groupstart#" scope="subtree" attributes="#application.config.ldap.groupidattribute#" filter="#replace(application.config.ldap.groupfilter,'{userid}',arguments.userid)#" />
+			<cfldap server="#application.config.ldap.host#" action="query" name="qResult" start="#getUserDN(arguments.UserID)#" scope="subtree" attributes="memberOf" filter="#replace(application.config.ldap.groupfilter,'{userid}',arguments.userid)#" />
 		</cfif>
-		
-		<cfloop query="qResult">
-			<cfset arrayappend(aGroups,qResult[application.config.ldap.groupidattribute][currentrow]) />
-		</cfloop>
+
+		<cfif qResult.recordCount>
+			<!--- ensure memeberOf is a string so that we can use split() --->
+			<cfset memberOf = "#qResult.memberOf#">
+			<cfset aGroups = memberOf.split(", ")>
+			<cfloop from="1" to="#arrayLen(aGroups)#" index="i">
+				<cfset aGroups[i] = replaceNoCase(listFirst(aGroups[i]), "CN=", "")>
+			</cfloop>
+		</cfif>
 		
 		<cfreturn aGroups />
 	</cffunction>
