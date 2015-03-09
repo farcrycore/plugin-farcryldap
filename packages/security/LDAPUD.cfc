@@ -19,10 +19,11 @@
 				<cfset stResult.userid = "" />
 				<cfset stResult.authenticated = false />
 				<cfset stResult.message = "" />
+				<cfset userDN = getUserDN(stProperties.username) />
 		
 				<!--- Find the user --->
 				<cftry>
-					<cfldap server="#application.config.ldap.host#" action="query" name="qResult" start="#application.config.ldap.userstart#" scope="base" attributes="*" username="#getUserDN(stProperties.username)#" password="#stProperties.password#" />
+					<cfldap server="#application.config.ldap.host#" action="query" name="qResult" start="#userDN#" scope="base" attributes="*" filter="objectClass=*" username="#userDN#" password="#stProperties.password#" />
 					<cfset stResult.authenticated = true />
 					<cfset stResult.userid = stProperties.username />
 					
@@ -123,7 +124,7 @@
 			</cfloop>
 
 			<cfif len(application.config.ldap.username) and len(application.config.ldap.password)>
-				<cfldap server="#application.config.ldap.host#" username="#application.config.ldap.username#" password="#application.config.ldap.password#" action="query" name="qResult" start="#userdn#" scope="base" attributes="#structkeylist(stUserToProfile)#" />
+				<cfldap server="#application.config.ldap.host#" username="#application.config.ldap.username#" password="#application.config.ldap.password#" action="query" name="qResult" start="#userdn#" scope="base" attributes="#structkeylist(stUserToProfile)#" filter="objectClass=*"/>
 			<cfelse>
 				<cfldap server="#application.config.ldap.host#" action="query" name="qResult" start="#userdn#" scope="base" attributes="#structkeylist(stUserToProfile)#" />
 			</cfif>
