@@ -32,4 +32,14 @@ In the webtop, open the configuration settings for 'LDAP' (Webtop -> Admin -> Ed
 | All Groups Filter | The LDAP query that will return every groups |
 | Group ID Attribute | The LDAP attribute to use as the group id in FarCry. Group id's should not contain a '_' |
 
+### Distinguished Names
+
+> **TIP** to sort out your config you'll need to get to grips with the concept of Distinguished Names.. its how LDAP identifies objects in its directory.
+
+The LDAP API references an LDAP object by its distinguished name (DN). A DN is a sequence of relative distinguished names (RDN) connected by commas.
+
+https://msdn.microsoft.com/en-us/library/aa366101%28v=vs.85%29.aspx?f=255&MSPPError=-2147217396
+
+
+
 Enjoy!
