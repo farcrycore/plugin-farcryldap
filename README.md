@@ -1,6 +1,6 @@
 # FarCry LDAP Plugin
 
-The LDAP user directory plugin hooks up existing LDAP directories with the internal FarCry securiety model. Active Directory is well supported through the Active Directory LDAP interface.
+The LDAP user directory plugin hooks up existing LDAP directories with the internal FarCry security model. Active Directory is well supported through the Active Directory LDAP interface.
 
 - Use the latest version of this plugin is for use with FarCry 7.x and above.
 - Use the `1.0 tag` for installations up to FarCry 6.x
