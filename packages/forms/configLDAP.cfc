@@ -1,7 +1,11 @@
 <cfcomponent displayname="LDAP Configuration" hint="Configuratin of LDAP user directory" extends="farcry.core.packages.forms.forms" output="false" key="ldap">
 	<cfproperty name="host" type="string" default="127.0.0.1" hint="The LDAP server" ftSeq="1" ftFieldset="Server" ftLabel="Host" ftType="string" />
-	<cfproperty name="username" type="string" default="" hint="Username for accessing server (empty for anonymous access)" ftSeq="2" ftFieldset="Server" ftLabel="Username" ftType="string" />
-	<cfproperty name="password" type="string" default="" hint="Password for accessing server (empty for anonymous access)" ftSeq="3" ftFieldset="Server" ftLabel="Password" ftType="password" ftRenderType="editpassword" />
+	<cfproperty name="port" type="string" default="" hint="Port for accessing server" ftSeq="2" ftFieldset="Server" ftLabel="Port" ftType="string" />
+	<cfproperty name="bSSL" type="boolean" default="0" hint="Security to employ, and required information. If you specify this attribute, its value must be CFSSL_BASIC, which provides V2 SSL encryption and server authentication." 
+				ftSeq="3" ftFieldset="Server" ftLabel="SSL" ftType="boolean"
+				ftHint="Should the connection go over SSL" />
+	<cfproperty name="username" type="string" default="" hint="Username for accessing server (empty for anonymous access)" ftSeq="5" ftFieldset="Server" ftLabel="Username" ftType="string" />
+	<cfproperty name="password" type="string" default="" hint="Password for accessing server (empty for anonymous access)" ftSeq="6" ftFieldset="Server" ftLabel="Password" ftType="password" ftRenderType="editpassword" />
 	
 	<cfproperty name="userstart" type="string" default="o=Directory" hint="The DN of the node to look for users under" ftSeq="11" ftFieldset="Users" ftLabel="User start DN" ftType="string" />
 	<cfproperty name="userdn" type="string" default="cn={userid},ou=users,o=Directory" hint="The DN for a user" ftSeq="12" ftFieldset="Users" ftLabel="User DN" ftType="string" />
