@@ -74,6 +74,7 @@
 		
 		<cfset var qResult = "" />
 		<cfset var aGroups = arraynew(1) />
+		<cfset var aSplitGroups = arraynew(1) />
 		<cfset var memberOf = "" />
 		<cfset var i = 0 />
 		<cfset var stLDAP = structNew() />
@@ -105,9 +106,13 @@
 		<cfif qResult.recordCount>
 			<!--- ensure memeberOf is a string so that we can use split() --->
 			<cfset memberOf = "#qResult.memberOf#">
-			<cfset aGroups = memberOf.split(", ")>
-			<cfloop from="1" to="#arrayLen(aGroups)#" index="i">
-				<cfset aGroups[i] = replaceNoCase(listFirst(aGroups[i]), "CN=", "")>
+			<cfset aSplitGroups = memberOf.split("#application.config.ldap.groupidattribute#=")>
+			
+			<cfloop from="1" to="#arrayLen(aSplitGroups)#" index="i">
+				<cfset groupName = replaceNoCase(listFirst(aSplitGroups[i]), "#application.config.ldap.groupidattribute#=", "") />
+				<cfif len(trim(groupName))>
+					<cfset arrayAppend(aGroups, groupName ) />
+				</cfif>
 			</cfloop>
 		</cfif>
 		
