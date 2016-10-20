@@ -257,13 +257,10 @@
 		</cfloop>
 		
 		<!--- Convert the array to a string which will be used in a subsequent LDAP filter --->
-		<cfsavecontent variable="tmpfilter">
-			<cfsetting enableCFoutputOnly = "yes">
-				<cfloop from="1" to="#ArrayLen(aUsers)#" index="i">
-					<cfoutput>(cn=#Trim(aUsers[i])#)</cfoutput>
-				</cfloop>
-			</cfsetting>
-		</cfsavecontent>
+		<cfset tmpfilter = "" />
+			<cfloop from="1" to="#ArrayLen(aUsers)#" index="i">
+				<cfset tmpfilter = listAppend(tmpfilter,"(cn=#Trim(aUsers[i])#)","") />
+			</cfloop>
 		
 		<cfset userfilter = "(&(objectClass=user)(|#trim(tmpfilter)#))">
 		
