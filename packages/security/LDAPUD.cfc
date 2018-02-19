@@ -50,7 +50,8 @@
 														attributes="*" ,
 														filter="objectClass=*" ,
 														username="#userDN#" ,
-														password="#stProperties.password#") />
+														password="#stProperties.password#",
+														timeout=5) />
 
 					<cfldap attributeCollection="#stLDAP#" />
 
@@ -87,7 +88,8 @@
 													start="#getUserDN(arguments.UserID)#" ,
 													scope="subtree" ,
 													attributes="memberOf" ,
-													filter="#replace(application.config.ldap.groupfilter,'{userid}',arguments.userid)#") />
+													filter="#replace(application.config.ldap.groupfilter,'{userid}',arguments.userid)#",
+													timeout=5) />
 
 
 
@@ -98,7 +100,8 @@
 													start="#getUserDN(arguments.UserID)#" ,
 													scope="subtree" ,
 													attributes="memberOf" ,
-													filter="#replace(application.config.ldap.groupfilter,'{userid}',arguments.userid)#") />
+													filter="#replace(application.config.ldap.groupfilter,'{userid}',arguments.userid)#",
+													timeout=5) />
 
 			<cfldap attributeCollection="#stLDAP#" />
 		</cfif>
@@ -134,7 +137,8 @@
 													scope="subtree" ,
 													start="#application.config.ldap.userstart#" ,
 													attributes="distinguishedName" ,
-													filter="sAMAccountName=#arguments.userid#") />
+													filter="sAMAccountName=#arguments.userid#",
+													timout=5) />
 
 			<cfldap attributeCollection="#stLDAP#" />
 
@@ -157,7 +161,8 @@
 													start="#application.config.ldap.groupstart#" ,
 													scope="subtree" ,
 													attributes="#application.config.ldap.groupidattribute#" ,
-													filter="#application.config.ldap.allgroupsfilter#") />
+													filter="#application.config.ldap.allgroupsfilter#",
+													timeout=5) />
 
 			<cfldap attributeCollection="#stLDAP#" />
 		<cfelse>
@@ -166,7 +171,8 @@
 													start="#application.config.ldap.groupstart#" ,
 													scope="subtree" ,
 													attributes="#application.config.ldap.groupidattribute#" ,
-													filter="#application.config.ldap.allgroupsfilter#") />
+													filter="#application.config.ldap.allgroupsfilter#",
+													timeout=5) />
 
 			<cfldap attributeCollection="#stLDAP#" />
 		</cfif>
@@ -205,7 +211,8 @@
 														start="#userdn#" ,
 														scope="base" ,
 														attributes="#structkeylist(stUserToProfile)#" ,
-														filter="objectClass=*") />
+														filter="objectClass=*",
+														timeout=5) />
 
 				<cfldap attributeCollection="#stLDAP#" />
 			<cfelse>
@@ -213,7 +220,8 @@
 														name="qResult" ,
 														start="#userdn#" ,
 														scope="base" ,
-														attributes="#structkeylist(stUserToProfile)#") />
+														attributes="#structkeylist(stUserToProfile)#",
+														timeout=5) />
 
 				<cfldap attributeCollection="#stLDAP#" />
 			</cfif>
@@ -244,7 +252,8 @@
 												start="#application.config.ldap.groupstart#",
 												scope="subtree",
 												attributes="member",
-												filter="(&(objectclass=group)(cn=#arguments.group#))") />
+												filter="(&(objectclass=group)(cn=#arguments.group#))",
+												timeout=5) />
 
 		<cfldap attributeCollection="#stLDAP#" />
 
@@ -272,7 +281,8 @@
 												start="#application.config.ldap.userstart#",
 												scope="subtree",
 												attributes="sAMAccountName",
-												filter="#userfilter#") />
+												filter="#userfilter#",
+												timeout=5) />
 
 		<cfldap attributeCollection="#stLDAP#" />
 		
